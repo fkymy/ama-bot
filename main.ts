@@ -1,25 +1,31 @@
-import { Client, Intents, Message } from 'discord.js';
+import fs from 'node:fs';
+import { Client, Intents } from 'discord.js';
 import config from './config';
 
-const intents = new Intents();
-intents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES);
+const main = async () => {
+  const intents = new Intents();
+  intents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES);
 
-const client = new Client({ intents });
+  const client = new Client({ intents });
 
-client.once('ready', () => {
-  console.log(`Logged in as ${client.user?.tag}!`);
-  client.user?.setActivity('active');
-  const link = client.generateInvite({
-    scopes: ['bot'],
-    permissions: [],
-  });
-  console.log(`Generated bot invite link: ${link}`);
-});
+  const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.ts'));
 
-client.on('messageCreate', (msg: Message) => {
-  if (msg.content === 'ping') {
-    msg.channel.send('pong');
+  for (const file of eventFiles) {
+    const { default: event } = await import(`./events/${file}`);
+    if (event.once) {
+      console.log('once!');
+      client.once(event.name, async (...args) => event.execute(...args));
+    } else {
+      console.log('on!');
+      client.on(event.name, async (...args) => event.execute(...args));
+    }
   }
-});
 
-client.login(config.token);
+  client.login(config.token);
+}
+
+main()
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
