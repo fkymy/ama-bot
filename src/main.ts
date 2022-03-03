@@ -14,7 +14,7 @@ async function main() {
 
   const client = new Client({ intents: intents, partials: ['CHANNEL'] });
 
-  const eventFiles = fs.readdirSync(path.resolve(__dirname, './events')).filter(file => file.endsWith('.ts'));
+  const eventFiles = fs.readdirSync(path.resolve(__dirname, './events'));
   for (const file of eventFiles) {
     const { default: event } = await import(`./events/${file}`);
     if (event.once) {
