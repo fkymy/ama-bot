@@ -4,20 +4,23 @@ import config from './config';
 
 const main = async () => {
   const intents = new Intents();
-  intents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES);
+  intents.add(
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.DIRECT_MESSAGES,
+    Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
+  );
 
-  const client = new Client({ intents });
+  const client = new Client({ intents: intents, partials: ['CHANNEL'] });
 
   const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.ts'));
 
   for (const file of eventFiles) {
     const { default: event } = await import(`./events/${file}`);
     if (event.once) {
-      console.log('once!');
-      client.once(event.name, async (...args) => event.execute(...args));
+      client.once(event.name, async (...args) => event.execute(...args, client));
     } else {
-      console.log('on!');
-      client.on(event.name, async (...args) => event.execute(...args));
+      client.on(event.name, async (...args) => event.execute(...args, client));
     }
   }
 
