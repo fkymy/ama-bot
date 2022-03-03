@@ -1,5 +1,5 @@
 import { Message, TextChannel } from 'discord.js';
-import url from 'url';
+import { loadDefaultJapaneseParser } from 'budoux';
 
 import { USERNAME, OG_IMAGE_BASE_URL } from '../constants';
 
@@ -10,7 +10,6 @@ export default {
     if (message.channel.type !== 'DM') return;
     if (message.type === 'REPLY' && message.author.username === USERNAME) return;
 
-    // console.log(`[SEND] author: '${message.author.username}', content: '${message.content}'`);
     // 1. Get CHANNEL_ID and message in correct format
     let channelId: string;
     let text: string;
@@ -33,10 +32,12 @@ export default {
     }
 
     // 2. Generate og-image url
+    const parser = loadDefaultJapaneseParser();
+    const textWithLineBreak = parser.translateHTMLString(text);
     const url = new URL(OG_IMAGE_BASE_URL);
-    url.pathname = `${encodeURIComponent(text)}.png`;
+    url.pathname = `${encodeURIComponent(textWithLineBreak)}.png`;
     url.searchParams.append('theme', 'light');
-    url.searchParams.append('md', '1');
+    url.searchParams.append('md', '0');
     url.searchParams.append('fontSize', '100px');
 
     // 3. Send text to channel
