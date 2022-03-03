@@ -4,7 +4,7 @@
   "description": "Anonymous AMA Bot",
   "main": "index.js",
   "scripts": {
-    "test": "ts-node main.ts",
+    "test": "ts-node src/main.ts",
     "start": "node build/main.js",
     "compile": "tsc -p ."
   },

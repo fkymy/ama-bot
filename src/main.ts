@@ -1,8 +1,9 @@
 import fs from 'node:fs';
+import path from 'path';
 import { Client, Intents } from 'discord.js';
 import config from './config';
 
-const main = async () => {
+async function main() {
   const intents = new Intents();
   intents.add(
     Intents.FLAGS.GUILDS,
@@ -13,8 +14,7 @@ const main = async () => {
 
   const client = new Client({ intents: intents, partials: ['CHANNEL'] });
 
-  const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.ts'));
-
+  const eventFiles = fs.readdirSync(path.resolve(__dirname, './events')).filter(file => file.endsWith('.ts'));
   for (const file of eventFiles) {
     const { default: event } = await import(`./events/${file}`);
     if (event.once) {
