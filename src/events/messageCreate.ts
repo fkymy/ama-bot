@@ -46,7 +46,7 @@ export default {
     url.searchParams.append(
       'fontSize',
       text.length < 50 ? '100px' :
-      text.length < 100 ? '80px' : '60px'
+      text.length < 100 ? '75px' : '60px'
     );
 
     // 3. Send text to channel
