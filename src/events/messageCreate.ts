@@ -29,12 +29,13 @@ export default {
 
     text = words.slice(2, words.length).join(' ');
     if (text.length > 140) {
-      message.reply('Message must be less than 140 words');
+      message.reply('Message must be less than 140 letters');
       return;
     }
 
     // Natural line breaks for Japanese
     const parser = loadDefaultJapaneseParser();
+    const tokens = parser.parse(text);
     textWithLineBreak = parser.translateHTMLString(text);
 
     // 2. Generate og-image url
@@ -42,7 +43,11 @@ export default {
     url.pathname = `${encodeURIComponent(textWithLineBreak)}.png`;
     url.searchParams.append('theme', 'light');
     url.searchParams.append('md', '1');
-    url.searchParams.append('fontSize', text.length < 80 ? '100px' : '80px');
+    url.searchParams.append(
+      'fontSize',
+      text.length < 50 ? '100px' :
+      text.length < 100 ? '80px' : '60px'
+    );
 
     // 3. Send text to channel
     const channel = message.client.channels.cache.get(channelId);
