@@ -5,7 +5,7 @@ export default {
   once: true,
   execute(client: Client) {
     console.log(`Ready! Logged in as ${client.user?.tag}`);
-    client.user?.setActivity('active');
+    client.user?.setActivity('Format: send CHANNEL_ID メッセージ');
     const link = client.generateInvite({
       scopes: ['bot'],
       permissions: [],

@@ -13,32 +13,36 @@ export default {
     // 1. Get CHANNEL_ID and message in correct format
     let channelId: string;
     let text: string;
+    let textWithLineBreak: string;
 
     const words = message.content.split(' ');
     if (words.length < 3) {
-      message.reply('Format: send [CHANNEL_ID] message...')
+      message.reply('Format: send CHANNEL_ID メッセージ')
       return;
     }
     if (words[0] !== 'send') {
-      message.reply('Format: send [CHANNEL_ID] message...')
+      message.reply('Format: send CHANNEL_ID メッセージ')
       return;
     }
 
     channelId = words[1];
+
     text = words.slice(2, words.length).join(' ');
     if (text.length > 140) {
       message.reply('Message must be less than 140 words');
       return;
     }
 
-    // 2. Generate og-image url
+    // Natural line breaks for Japanese
     const parser = loadDefaultJapaneseParser();
-    const textWithLineBreak = parser.translateHTMLString(text);
+    textWithLineBreak = parser.translateHTMLString(text);
+
+    // 2. Generate og-image url
     const url = new URL(OG_IMAGE_BASE_URL);
     url.pathname = `${encodeURIComponent(textWithLineBreak)}.png`;
     url.searchParams.append('theme', 'light');
-    url.searchParams.append('md', '0');
-    url.searchParams.append('fontSize', '100px');
+    url.searchParams.append('md', '1');
+    url.searchParams.append('fontSize', text.length < 80 ? '100px' : '80px');
 
     // 3. Send text to channel
     const channel = message.client.channels.cache.get(channelId);
