@@ -10,22 +10,26 @@ export default {
     if (message.channel.type !== 'DM') return;
     if (message.type === 'REPLY' && message.author.username === USERNAME) return;
 
-    // 1. Get CHANNEL_ID and message in correct format
-    let channelId: string;
-    let text: string;
-    let textWithLineBreak: string;
+    // 1. Get CHANNEL_ID and message to be sent in correct format
+    let channelId: string = '';
+    let text: string = '';
 
-    const words = message.content.split(' ');
+    const words = message.content.split(/(\s+)/);
     if (words.length < 3) {
-      message.reply('Format: send CHANNEL_ID メッセージ')
-      return;
-    }
-    if (words[0] !== 'send') {
-      message.reply('Format: send CHANNEL_ID メッセージ')
+      message.reply('Format: send [CHANNEL_ID | LINK_TO_CHANNEL] メッセージ')
       return;
     }
 
-    channelId = words[1];
+    const [command, arg] = words;
+    if (command !== 'send') {
+      message.reply('Format: send [CHANNEL_ID | LINK_TO_CHANNEL] メッセージ')
+      return;
+    }
+
+    const split = arg.split('/').pop();
+    if (split) {
+      channelId = split;
+    }
 
     text = words.slice(2, words.length).join(' ');
     if (text.length > 140) {
@@ -35,8 +39,7 @@ export default {
 
     // Natural line breaks for Japanese
     const parser = loadDefaultJapaneseParser();
-    const tokens = parser.parse(text);
-    textWithLineBreak = parser.translateHTMLString(text);
+    const textWithLineBreak = parser.translateHTMLString(text);
 
     // 2. Generate og-image url
     const url = new URL(OG_IMAGE_BASE_URL);
@@ -54,9 +57,9 @@ export default {
     if (channel && channel.type === 'GUILD_TEXT') {
       (channel as TextChannel).send(url.href)
         .then(() => message.react('👍'))
-        .catch((err) => message.reply(`Error sending message: ${err}`));
+        .catch((err) => message.reply(`Error sending message: '${err}'`));
     } else {
-      message.reply(`Could not find channel with CHANNEL_ID: ${channelId}`);
+      message.reply(`Could not find channel with CHANNEL_ID: '${channelId}'`);
     }
   }
 }
