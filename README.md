@@ -6,7 +6,7 @@ This bot allows users to ask questions in a Discord server anonymously.
 2. DM this bot with the following format
 
 ```
-send <CHANNEL_ID> some message
+send [CHANNEL_ID | LINK_TO_CHANNEL] some message
 ```
 
 Be thoughtful.
