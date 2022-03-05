@@ -14,7 +14,7 @@ export default {
     let channelId: string = '';
     let text: string = '';
 
-    const words = message.content.split(/(\s+)/);
+    const words = message.content.split(/\s+/);
     if (words.length < 3) {
       message.reply('Format: send [CHANNEL_ID | LINK_TO_CHANNEL] メッセージ')
       return;
