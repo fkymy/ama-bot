@@ -46,7 +46,7 @@ export default {
 
     // 2. Generate og-image url
     const url = new URL(OG_IMAGE_BASE_URL);
-    url.pathname = `${encodeURIComponent(text)}.png`;
+    url.pathname = `${encodeURIComponent(textWithLineBreak)}.png`;
     url.searchParams.append('theme', 'light');
     url.searchParams.append('md', '1');
     url.searchParams.append(
