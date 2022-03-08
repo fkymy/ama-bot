@@ -37,6 +37,9 @@ export default {
       return;
     }
 
+    // Display HTML tags as plain text
+    text = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
     // Natural line breaks for Japanese
     const parser = loadDefaultJapaneseParser();
     const textWithLineBreak = parser.translateHTMLString(text);
