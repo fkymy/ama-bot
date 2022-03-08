@@ -37,13 +37,16 @@ export default {
       return;
     }
 
+    // Display HTML tags as plain text
+    text = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
     // Natural line breaks for Japanese
     const parser = loadDefaultJapaneseParser();
     const textWithLineBreak = parser.translateHTMLString(text);
 
     // 2. Generate og-image url
     const url = new URL(OG_IMAGE_BASE_URL);
-    url.pathname = `${encodeURIComponent(textWithLineBreak)}.png`;
+    url.pathname = `${encodeURIComponent(text)}.png`;
     url.searchParams.append('theme', 'light');
     url.searchParams.append('md', '1');
     url.searchParams.append(
